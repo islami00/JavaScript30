@@ -1,22 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <form class="search-form">
+      <input type="text" class="search" placeholder="City or State" />
+      <ul class="suggestions">
+        <li>Filter for a city</li>
+        <li>or a state</li>
+      </ul>
+    </form>
 
-  <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
-    <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
-    </ul>
-  </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+    <script>
+      const endpoint =
+        'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
-</script>
-</body>
+      const cities = [];
+      fetch(endpoint)
+        .then((resp) => resp.json())
+        .then((data) => cities.push(...data));
+
+      function findMatches(input, paramCities) {
+        return paramCities.filter((element) => {
+          // g is global, meaning it will retain matches through the search i is insensitive
+          const regex = new RegExp(input, 'gi');
+
+          const cityMatch = element.city.match(regex);
+          const stateMatch = element.state.match(regex);
+          return cityMatch || stateMatch;
+        });
+      }
+
+      const searchInput = document.querySelector('.search');
+      const suggestions = document.querySelector('.suggestions');
+
+      const htmlEscapables = [
+        ['&', '&amp'],
+        ['"', '&quot'],
+        ["'", '&apos'],
+        ['<', '&lt'],
+        ['>', '&gt'],
+      ];
+      // Input sanitisation if it was needed in this context, which it isn't & is first to avoid reescaping &
+      // this current implementation isnt doing anything sinister so it is xss free. I.e what we are displaying is trusted data But I will still sanitise
+      /* const sanitise = searchInput.value;
+             const sanitised = htmlEscapables.reduce(function (prevRet, currentEsc) {
+               const [char, escape] = currentEsc;
+               if (sanitise.includes(char)) {
+                 return prevRet.replaceAll(char, escape); //Note: I could have used regex here but replace all is more intuitive since we not need insensitive case
+               }
+               return prevRet;
+             }, sanitise);
+      */
+
+      function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+      function displayMatches() {
+        const matchArray = findMatches(this.value, cities);
+
+        const html = matchArray
+          // THis has been scoped to displayMatches and display matches has global to be eventTarget cuz of function. Closures eh?
+          .map((element) => {
+            const reg = new RegExp(this.value, 'gi');
+            const newCity = element.city.replace(reg, `<span class="hl">${this.value}</span>`);
+            const newState = element.state.replace(reg, `<span class="hl">${this.value}</span>`);
+            const commaPop = numberWithCommas(element.population);
+            return `
+            <li>
+             <span class="name">${newCity}, ${newState}</span>
+             <span class="name">${commaPop}</span>
+            </li>
+            `;
+          })
+          .join('');
+        suggestions.innerHTML = html;
+      }
+
+      searchInput.addEventListener('input', displayMatches);
+    </script>
+  </body>
 </html>
