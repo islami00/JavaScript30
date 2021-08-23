@@ -1,10 +1,12 @@
 <!DOCTYPE html>
+<!-- prettier-ignore -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Flex Panels 💪</title>
   <link href='https://fonts.googleapis.com/css?family=Amatic+SC' rel='stylesheet' type='text/css'>
 </head>
+
 <body>
   <style>
     html {
@@ -26,6 +28,7 @@
     .panels {
       min-height: 100vh;
       overflow: hidden;
+      display: flex;
     }
 
     .panel {
@@ -43,6 +46,11 @@
       font-size: 20px;
       background-size: cover;
       background-position: center;
+      flex-grow: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
     }
 
     .panel1 { background-image:url(https://source.unsplash.com/gYl-UtwNg_I/1500x1500); }
@@ -65,14 +73,28 @@
       font-size: 2em;
     }
     
+    .panel p:nth-child(1){
+      transform: translateY(-50vh);
+      /* This method is also good, but it requires one to bet on vh, or some number guessing. Flex all the way down is better */
+      /* Also, it messes with the animation and doesn't really give the flow we want */
+    }
+  
+    .panel p:nth-child(3){
+   transform: translateY(50vh);
+    
+  }
+
     .panel p:nth-child(2) {
       font-size: 4em;
     }
 
     .panel.open {
       font-size: 40px;
+      flex-grow: 5;
     }
-
+    .panel.open-active p:nth-child(1), .panel.open-active p:nth-child(3){
+      transform: translateX(0);
+    }
   </style>
 
 
@@ -103,9 +125,29 @@
       <p>Motion</p>
     </div>
   </div>
-
+<!-- prettier-format -->
   <script>
+const panels = document.querySelectorAll('.panel').forEach(function (element, index) {
+  element.addEventListener('click', function (e) {
+    element.classList.toggle('open');
+  });
+  element.addEventListener('transitionend', function (e) {
+    // Multiple transitionends, we only want the one where the container has fully grown
+    // Diferent names for flex and flex-grow in browsers non-respecting what we defined so,
+    if (e.propertyName.includes('flex')) {
+      element.classList.toggle('open-active');
+    }
+  });
+});
 
+// Not needed
+// const activifier = function(className,ind){
+//   document.querySelectorAll('.panel').forEach(function(element,index){
+//   if(index===ind){
+//     return;
+//   }
+//     element.classList.remove(className)
+// })}
   </script>
 
 
