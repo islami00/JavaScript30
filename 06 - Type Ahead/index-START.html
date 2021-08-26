@@ -55,7 +55,24 @@
                return prevRet;
              }, sanitise);
       */
-
+		/* One more thing I noticed: One can actually sanitise input in this case by running a regex or a split (to avoid overkill) 
+		and split the input based on the stopword, then join it if the output doesn't include the stopword. Else, filter the array 
+		for the stop word and remove it. A similar methodology as the above. Only, the replace value for the stopwords is ''
+		 not it's escape value Hence giving the following structure for search input validation: 
+		 const searchRemovables = [
+				['&', ''],
+				['"', ''],
+				["'", ''],
+				['<', ''],
+				['>', ''],
+			  ];
+		 Eliminate the need for a replace entirely if we don't plan on supporting these as they are not in our target data names
+		 const searchRemovables = ['&', '"', "'",'<','>'];
+		 
+		 We can also construct such a list by searching through the input fields we made requestable and creating a group of
+		 supported characters e.g: The names field is available to search, and the names only contain letters,
+		 so we can filter anything that isn't letters, and add charset as needed e.g transliterated japanese
+		 */
       function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       }
