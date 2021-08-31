@@ -1,46 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Console Tricks!</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Console Tricks!</title>
+  </head>
+  <body>
+    <p onClick="makeGreen()">×BREAK×DOWN×</p>
 
-  <p onClick="makeGreen()">×BREAK×DOWN×</p>
+    <script>
+      /* eslint-disable */
+      const dogs = [
+        { name: 'Snickers', age: 2 },
+        { name: 'hugo', age: 8 },
+      ];
 
-  <script>
-    const dogs = [{ name: 'Snickers', age: 2 }, { name: 'hugo', age: 8 }];
+      function makeGreen() {
+        const p = document.querySelector('p');
+        p.style.color = '#BADA55';
+        p.style.fontSize = '50px';
+      }
 
-    function makeGreen() {
-      const p = document.querySelector('p');
-      p.style.color = '#BADA55';
-      p.style.fontSize = '50px';
-    }
+      // Regular
+      console.log('Hello');
+      // Interpolated
+      console.log('Hello I am a %s string!', 'Interpolated');
+      // Styled
+      // %c
+      // console.log('%c I am some great text', 'font-size:20px;color:red; background:green;')
+      // warning! gives a stack trace too
+      console.warn('OH heck');
+      // Error :|
+      console.error('Bad');
+      // Info
+      console.info('Crocodiles eat 3-5ppl per year');
+      // Testing - Assert only fires when sth is wrong - fire an error if sth is true
+      p = document.querySelector('p');
+      console.assert(1 !== 1, 'You did not select the right element');
+      // clearing - frustrate a developer
+      // Viewing DOM Elements
 
-    // Regular
+      console.dir(p);
+      console.clear();
+      // Grouping together
+      dogs.forEach((dog) => {
+        const { name, age } = dog;
+        // To collapse use groupCollapsed
+        console.groupCollapsed(`${name}`);
+        // label and end your group in the same way
+        console.log(`This is ${name}`);
+        console.log(`${name} is ${age} years old`);
+        console.log(`${name} is ${age * 7} dog years old`);
+        console.groupEnd(`${name}`);
+      });
 
-    // Interpolated
-
-    // Styled
-
-    // warning!
-
-    // Error :|
-
-    // Info
-
-    // Testing
-
-    // clearing
-
-    // Viewing DOM Elements
-
-    // Grouping together
-
-    // counting
-
-    // timing
-
-  </script>
-</body>
+      // counting , how many times u use a dom object/this thing
+      console.count('a');
+      console.count('a');
+      console.count('a');
+      console.count('a');
+      console.count('b');
+      console.count('b');
+      console.count('c');
+      console.count('c');
+      console.count('c');
+      console.count('c');
+      console.count('b');
+      console.count('b');
+      console.count('b');
+      // timing
+      console.time('Fetching data');
+      fetch('https://api.github.com/users/islami00')
+        .then((res) => res.json())
+        .then((data) => {
+          console.timeEnd('Fetching data');
+          console.log(data);
+        });
+      // performance.now()
+      // also that option
+      // table. An array of object with same properties. Tablify them,sort too.
+      console.table(dogs);
+    </script>
+  </body>
 </html>
