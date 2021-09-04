@@ -1,12 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Key Detection</title>
-  <script type="text/javascript" src="https://www.cornify.com/js/cornify.js"></script>
-</head>
-<body>
-<script>
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Key Detection</title>
+    <script type="text/javascript" src="https://www.cornify.com/js/cornify.js"></script>
+  </head>
+  <body>
+    <script defer>
+      const memo = { pressed: [] };
+      const secretCode = 'wesbos';
+      window.addEventListener('keyup', (e) => {
+        // tip: destructuring retains a reference to our base array, for our nefarious mutating needs.
+        const { pressed } = memo;
+        pressed.push(e.key);
+        // The above ads a new
+        pressed.splice(-secretCode.length - 1, pressed.length - secretCode.length);
+        /* Array.splice
+        SO, afew things:
+        1. Splice does not execute on negative number of elements, so using the difference of length, we avoid removing elements that
+        2. we use splice to start at the beginning of the array by referencing its length + 1 as with negative indexing, once you go over...it stops at the last
+        Its like referencing further indexes than exist
+        3. Push places the newer elements at the end of the array
+        */
+        // effect: add letter to end, if letters more than needed, pop off first added letter,continue.
+        // In the end, we have an array with the first letter entered first and the last letter entered last
+        if (pressed.slice(-1, -pressed.length)) console.log(e.key, memo);
+        if (pressed.join('') === secretCode) {
+          console.log('Zoooiiinnggg, cornamiii');
+          console.log(window.cornify_add_cupcake_button);
+          cornify_add()
+        }
+      });
+    </script>
+  </body>
 </html>
